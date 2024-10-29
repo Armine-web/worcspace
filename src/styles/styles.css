@@ -46,10 +46,9 @@ a:hover{
 
 .form-wrapper {
   display: flex;
-  flex: 1;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 40px);
+  height: 80vh;
 }
 
 .form-container {
