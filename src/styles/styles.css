@@ -7,12 +7,10 @@
   box-sizing: border-box;
 }
 
-
-
 .container-root {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh- 30px);
 }
 
 .header {
@@ -106,13 +104,15 @@ p, span {
     font-family: "Tinos", serif;
 }
 
+
+
 .workspace {
     margin: 2vh;
     display: flex;
     flex-direction: row-reverse;
     padding: 20px;
     border-radius: 8px;
-    height: 82vh;
+    height: 83.5vh;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     gap: 20px;
 }
@@ -198,8 +198,6 @@ p, span {
 }
 
 .footer {
-    line-height: 3vh;
-    height: 8vh;
     background-color: rgb(245, 240, 240);
     padding: 15px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);

@@ -41,11 +41,16 @@ window.UI = {
         console.log('Invalid Element Type');
         return undefined;
       }
+
+      if(!isDOMElement(element)) {
+            return undefined
+          }
     
       target.appendChild(element);
       
     }
   };
+
 
 
  
