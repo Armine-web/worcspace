@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const bloggerList = document.querySelector('.sidebar__blogger-list');
 
-   
-
     bloggers.forEach(blogger => {
         const bloggerItem = document.createElement('li');
         bloggerItem.classList.add('sidebar__blogger-item');
