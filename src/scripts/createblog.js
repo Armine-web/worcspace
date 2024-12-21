@@ -1,4 +1,50 @@
-import { Storage } from './storage.js';
+import { API } from './api.js';
+
+class PostService {
+    constructor() {
+        this.api = new API('https://simple-blog-api-red.vercel.app/api');
+    }
+
+    fetchPosts() {
+        this.api.get('posts')
+            .then(posts => {
+                this.displayPosts(posts);
+            })
+            .catch(error => {
+                console.error('Error fetching posts:', error);
+            });
+    }
+
+    displayPosts(posts) {
+        const postContainer = document.querySelector('.blog-post__cards');
+        
+        postContainer.innerHTML = ''; 
+
+        posts.forEach(post => {
+            const postCard = document.createElement('div');
+            postCard.classList.add('blog-post__card');
+            postCard.innerHTML = `
+                <div class="blog-post__header">
+                    <h3>${post.id} - ${post.title}</h3>
+                    <p><strong>Author: ${post.authorName}</strong></p>
+                </div>
+                <div class="blog-post__content">
+                    <img class="blog-post__content-img" src="${post.img}" alt="${post.title}">
+                    <p>${post.story}</p>
+                </div>
+                <div class="blog-post__footer-wrapper">
+                    <div class="blog-post__footer">
+                        <a href="./updatepost.html?postId=${post.id}">Edit</a>  <!-- Add link to edit page -->
+                    </div>
+                    <div id = "deletePostButton" class="blog-post__footer delete">
+                        <a href="./deletepost.html?postId=${post.id}">Delete</a>  <!-- Add link to edit page -->
+                    </div>
+                </div>   
+            `;
+            postContainer.appendChild(postCard);
+        });
+    }
+}
 function createBlocLayout(){
     const container = UI.createElement("div", { class: "container-root" }, [
         UI.createElement("header", { class: "header" }, [
@@ -25,25 +71,9 @@ function createBlocLayout(){
 
     UI.render(container, document.body);
 
+    const postService = new PostService();
+    postService.fetchPosts();
 
-    const posts = Storage.getItem('posts') || [];
-
-  const postContainer = document.querySelector('.blog-post__cards');
-  posts.forEach(post => {
-    const postCard = document.createElement('div');
-    postCard.classList.add('blog-post__card');
-    postCard.innerHTML = `
-      <div class="blog-post__header">
-        <h3>${post.title}</h3>
-        <p><strong>Author: ${post.authorName}</strong></p>
-      </div>
-      <div class="blog-post__content">
-        <img class="blog-post__content-img" src="${post.img}" alt="${post.title}">
-        <p>${post.story}</p>
-      </div>
-    `;
-    postContainer.appendChild(postCard);
-  });
 }
 
 

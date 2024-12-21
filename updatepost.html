@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Post</title>
+    <link rel="stylesheet" href="src/styles/styles.css"> <!-- Add your styles here -->
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <a href="home.html">Back to Home</a>
+        </header>
+        
+        <div class="form-wrapper">
+            <div class="form-container post-form">
+                <h2>Update Blog Post</h2>
+                <form id="updatePostForm">
+                    <div class="form-group form-group__input">
+                        <label for="postId">Post ID</label>
+                        <input type="text" id="postId" placeholder="Enter the post ID" required>
+                    </div>
+
+                    <div class="form-group form-group__input">
+                        <label for="postautor">Autor Name</label>
+                        <input type="text" id="postautor" placeholder="Enter Autor Name" required>
+                    </div>
+                    
+                    <div class="form-group form-group__input">
+                        <label for="postTitle">Title</label>
+                        <input type="text" id="postTitle" placeholder="Enter the title" required>
+                    </div>
+                    
+                    <div class="form-group form-group__input">
+                        <label for="postStory">Story</label>
+                        <textarea id="postStory" placeholder="Enter the story" required></textarea>
+                    </div>
+                    
+                    <div class="form-group form-group__input">
+                        <label for="imageLink">Image Link</label>
+                        <input type="text" id="imageLink" placeholder="Enter the image link" required>
+                    </div>
+                  
+
+                    <button type="submit">Update Post</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="./src/scripts/utils.js"></script>
+    <script type="module" src="./src/scripts/api.js"></script>
+    <script type="module"  src="./src/scripts/updatepost.js"></script>
+
+</body>
+</html>

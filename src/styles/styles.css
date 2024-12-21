@@ -83,7 +83,7 @@ form input {
 button {
   border: 2px solid #006bb3;
   padding: 8px 18px;
-  border-radius: 30px;
+  border-radius: 8px;
   color: #006bb3;
   font-weight: 600;
   background-color: transparent;
@@ -102,6 +102,7 @@ button:hover{
 h3 {
     font-family: "Abril Fatface", serif;
     margin-bottom: 10px;
+    font-size: 20px;
 }
 
 p, span {
@@ -206,11 +207,71 @@ p, span {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
+.blog-post__footer-wrapper{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.blog-post__footer{
+  margin: 20px 0;
+}
+
+.blog-post__footer a{
+  font-size: 18px;
+  color: #fff;
+  padding: 5px 10px;
+  background: #006bb3;
+  border-radius: 8px;
+}
+
+.delete a {
+  background: rgb(166, 15, 15);
+}
+
+.blog-post__footer a:hover{
+  background: #f2f2f2;
+  color: #006bb3;
+  text-decoration: none;
+  box-shadow: 0 0 5px #013151;
+}
+
+.delete a:hover {
+  box-shadow: 0 0 5px rgb(166, 15, 15);
+  color: rgb(166, 15, 15);
+}
+
+.form-group__input {
+  width: 80%;
+  margin-top: 20px;
+}
+
+.form-group__input label{
+  color: #006bb3;
+  font-weight: bolder;
+}
+
+.post-form__delete {
+  width: 30%;
+}
+
+.post-form__id-display {
+  margin: 20px 0;
+}
+
+.post-form__buuton {
+  background-color: rgb(166, 15, 15);
+  border: none;
+  color: #fff;
+}
+
+.post-form__buuton:hover {
+  box-shadow: 0 0 5px rgb(166, 15, 15);
+  color: rgb(166, 15, 15);
+  background-color: #fff;
+}
 
 @media screen and (max-width: 1200px) {
-    h3 {
-        font-size: 20px;
-    }
     .footer {
         display: none;
     }
@@ -404,6 +465,32 @@ textarea {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: .5rem;
   margin: 15px 0;
+}
+
+
+.container-registration {
+  margin:100px auto;
+  padding: 20px;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 0 15px dimgray;
+}
+
+.container-registration header {
+  border-radius: 8px;
+}
+
+.container-registration form {
+  width: 340px;
+}
+
+.container-registration h2 {
+  margin: 20px;
+  color: rgb(94, 93, 93);
 }
 
 @media screen and (max-width: 1200px) {
