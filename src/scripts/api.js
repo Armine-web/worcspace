@@ -45,6 +45,9 @@ class API {
           .catch(error => console.error("DELETE request error:", error));
     }
 
+    login(data) {
+        return this.post('auth/login', data);
+    }
 
    
 }

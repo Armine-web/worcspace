@@ -17,7 +17,6 @@ class PostService {
 
     displayPosts(posts) {
         const postContainer = document.querySelector('.blog-post__cards');
-        
         postContainer.innerHTML = ''; 
 
         posts.forEach(post => {
@@ -25,7 +24,7 @@ class PostService {
             postCard.classList.add('blog-post__card');
             postCard.innerHTML = `
                 <div class="blog-post__header">
-                    <h3>${post.id} - ${post.title}</h3>
+                    <h3>${post.title}</h3>
                     <p><strong>Author: ${post.authorName}</strong></p>
                 </div>
                 <div class="blog-post__content">
@@ -39,56 +38,22 @@ class PostService {
                     <div id="deletePostButton" class="blog-post__footer delete">
                         <a href="./deletepost.html?postId=${post.id}">Delete</a>  
                     </div>
-                </div>   
+                </div>
             `;
             postContainer.appendChild(postCard);
         });
     }
 }
 
-function createHomeLayout() {
-    const container = UI.createElement("div", { class: "container-root" }, [
-        UI.createElement("header", { class: "header" }, [
-            UI.createElement("a", { href: "./index.html" }, "Log In"),
-            UI.createElement("a", { href: "./registration.html" }, "Registration"),
-            UI.createElement("a", { href: "./createblog.html" }, "Create Blog")
-        ]),
-        UI.createElement("div", { class: "workspace" }, [
-            UI.createElement("main", { class: "workspace__main" }, [
-                UI.createElement("div", { class: "blog-post" }, [
-                    UI.createElement("section", { class: "blog-post__cards" }, null)
-                ]),
-                UI.createElement("section", { class: "workspace__footer" }, "footer section")
-            ]),
-            UI.createElement("nav", { class: "sidebar" }, [
-                UI.createElement("ul", { class: "sidebar__blogger-list" }, null) 
-            ])
-        ]),
-        createFooter()
-    ]);
-
-    UI.render(container, document.body);
-
-    const postService = new PostService();
-    postService.fetchPosts();
-
-    fetchBloggers();
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    createHomeLayout();
-});
-
-
 function fetchBloggers() {
-    const bloggerList = document.querySelector('.sidebar__blogger-list'); 
+    const bloggerList = document.querySelector('.sidebar__blogger-list');
 
     if (!bloggerList) {
         console.error("Blogger list element not found!");
         return;
     }
 
-    fetch('https://simple-blog-api-red.vercel.app/users')
+    fetch('https://simple-blog-api-red.vercel.app/api/users')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -112,3 +77,41 @@ function fetchBloggers() {
             console.error('Error fetching bloggers:', error);
         });
 }
+
+function createHomeLayout() {
+    const container = UI.createElement("div", { class: "container-root" }, [
+        UI.createElement("header", { class: "header" }, [
+            UI.createElement("a", { href: "./index.html" }, "Log In"),
+            UI.createElement("a", { href: "./registration.html" }, "Registration"),
+            UI.createElement("a", { href: "./createblog.html" }, "Create Blog")
+        ]),
+        UI.createElement("div", { class: "workspace" }, [
+            UI.createElement("main", { class: "workspace__main" }, [
+                UI.createElement("div", { class: "blog-post" }, [
+                    UI.createElement("section", { class: "blog-post__cards" }, null)
+                ]),
+                UI.createElement("section", { class: "workspace__footer" }, "footer section")
+            ]),
+            UI.createElement("nav", { class: "sidebar" }, [
+                UI.createElement("ul", { class: "sidebar__blogger-list" }, null)
+            ])
+        ]),
+        createFooter()
+    ]);
+
+    UI.render(container, document.body);
+
+    const postService = new PostService();
+    postService.fetchPosts();
+
+    fetchBloggers();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const authToken = localStorage.getItem('authToken');
+    if (!authToken) {
+        window.location.href = './index.html';
+    } else {
+        createHomeLayout();
+    }
+});

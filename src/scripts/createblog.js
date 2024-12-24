@@ -25,7 +25,7 @@ class PostService {
             postCard.classList.add('blog-post__card');
             postCard.innerHTML = `
                 <div class="blog-post__header">
-                    <h3>${post.id} - ${post.title}</h3>
+                    <h3>${post.title}</h3>
                     <p><strong>Author: ${post.authorName}</strong></p>
                 </div>
                 <div class="blog-post__content">

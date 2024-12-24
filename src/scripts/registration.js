@@ -2,7 +2,7 @@ import { API } from './api.js';
 
 class RegistrationService {
     constructor() {
-        this.api = new API('https://simple-blog-api-red.vercel.app');
+        this.api = new API('https://simple-blog-api-red.vercel.app/api');
     }
 
     registerUser(userData) {
@@ -11,7 +11,7 @@ class RegistrationService {
                 if (response && response.id) {
                     alert('Registration successful!');
                    
-                    window.location.href = './home.html'; 
+                    window.location.href = './index.html'; 
                 } else {
                     alert('Registration failed. Please try again.');
                 }
@@ -38,4 +38,3 @@ registrationForm.addEventListener('submit', function (event) {
     registrationService.registerUser(userData);
 });
 
-  
