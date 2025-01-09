@@ -1,117 +1,201 @@
-import { API } from './api.js';
+import { api } from './apis/api.js';
+import { isUserLogin } from './utils/is-user-login.js'
 
-class PostService {
-    constructor() {
-        this.api = new API('https://simple-blog-api-red.vercel.app/api');
-    }
+const bloggers = [];
 
-    fetchPosts() {
-        this.api.get('posts')
-            .then(posts => {
-                this.displayPosts(posts);
-            })
-            .catch(error => {
-                console.error('Error fetching posts:', error);
-            });
-    }
+const state = {
+  posts: [],
+};
 
-    displayPosts(posts) {
-        const postContainer = document.querySelector('.blog-post__cards');
-        postContainer.innerHTML = ''; 
+function getRandomAvatar(gender) {
+  const avatars = [
+    "https://www.w3schools.com/howto/img_avatar.png",
+    "https://www.w3schools.com/w3images/avatar2.png",
+    "https://www.w3schools.com/w3images/avatar5.png",
+    "https://www.w3schools.com/w3images/avatar6.png",
+    "https://www.w3schools.com/howto/img_avatar2.png",
+  ];
 
-        posts.forEach(post => {
-            const postCard = document.createElement('div');
-            postCard.classList.add('blog-post__card');
-            postCard.innerHTML = `
-                <div class="blog-post__header">
-                    <h3>${post.title}</h3>
-                    <p><strong>Author: ${post.authorName}</strong></p>
-                </div>
-                <div class="blog-post__content">
-                    <img class="blog-post__content-img" src="${post.img}" alt="${post.title}">
-                    <p>${post.story}</p>
-                </div>
-                <div class="blog-post__footer-wrapper">
-                    <div class="blog-post__footer">
-                        <a href="./updatepost.html?postId=${post.id}">Edit</a>  
-                    </div>
-                    <div id="deletePostButton" class="blog-post__footer delete">
-                        <a href="./deletepost.html?postId=${post.id}">Delete</a>  
-                    </div>
-                </div>
-            `;
-            postContainer.appendChild(postCard);
-        });
-    }
+  const randomIndex = Math.floor(Math.random() * avatars.length);
+
+  return avatars[randomIndex];
 }
 
-function fetchBloggers() {
-    const bloggerList = document.querySelector('.sidebar__blogger-list');
+const createNewPost = () => {
+  window.location.assign("new-post.html");
+};
 
-    if (!bloggerList) {
-        console.error("Blogger list element not found!");
-        return;
-    }
+const createHomeLayout = function () {
+  const createNewPostButton =  UI.createElement(
+    "button",
+    { class: "panel-create-post" },
+    "Create New Post"
+  )
 
-    fetch('https://simple-blog-api-red.vercel.app/api/users')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(bloggers => {
-            bloggers.forEach(blogger => {
-                const randomSeed = Math.random().toString(36).substring(2, 15);
-                const avatarUrl = `https://avatars.dicebear.com/api/avataaars/${randomSeed}.svg`;
-                const bloggerItem = document.createElement('li');
-                bloggerItem.classList.add('sidebar__blogger-item');
-                bloggerItem.innerHTML = `
-                    <img src="${avatarUrl}" alt="${blogger.firstName} ${blogger.lastName}" class="sidebar__avatar">
-                    <span><strong>${blogger.firstName} ${blogger.lastName}</strong></span>
-                `;
-                bloggerList.appendChild(bloggerItem);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching bloggers:', error);
-        });
+  createNewPostButton.addEventListener("click", createNewPost);
+
+
+  const container = UI.createElement("div", { class: "container-root" }, [
+    UI.createElement(
+      "header",
+      {
+        class: "header",
+      },
+      [
+        UI.createElement("a", { href: "index.html" }, "Log In"),
+        UI.createElement("a", { href: "registration.html" }, "Sign Up"),
+      ]
+    ),
+    UI.createElement("main", { class: "main-section" }, [
+      createSidebar(bloggers),
+      UI.createElement("div", { class: "section" }, [
+        UI.createElement(
+          "section",
+          { class: "panel" },
+          createNewPostButton
+        ),
+        createSection(),
+        createFooter(),
+      ]),
+    ]),
+  ]);
+
+  UI.render(container, document.querySelector("body"));
+};
+
+function createFooter() {
+  return UI.createElement("section", { class: "footer" }, Date().toString());
 }
 
-function createHomeLayout() {
-    const container = UI.createElement("div", { class: "container-root" }, [
-        UI.createElement("header", { class: "header" }, [
-            UI.createElement("a", { href: "./index.html" }, "Log In"),
-            UI.createElement("a", { href: "./registration.html" }, "Registration"),
-            UI.createElement("a", { href: "./createblog.html" }, "Create Blog")
-        ]),
-        UI.createElement("div", { class: "workspace" }, [
-            UI.createElement("main", { class: "workspace__main" }, [
-                UI.createElement("div", { class: "blog-post" }, [
-                    UI.createElement("section", { class: "blog-post__cards" }, null)
-                ]),
-                UI.createElement("section", { class: "workspace__footer" }, "footer section")
-            ]),
-            UI.createElement("nav", { class: "sidebar" }, [
-                UI.createElement("ul", { class: "sidebar__blogger-list" }, null)
-            ])
-        ]),
-        createFooter()
+
+const handleDelete = (id) => {
+  api.post.delete(id).then(() => {
+    state.posts = state.posts.filter((post) => post.id !== id);
+
+    document.querySelector(".container-root").remove();
+
+    createHomeLayout();
+  })
+};
+
+const handleEdit = (event, id) => {
+ 
+  event.preventDefault(event);
+  const queryParams = new URLSearchParams({
+    id: id,
+  });
+ 
+  localStorage.setItem('id', id);
+
+  window.location.href = `edit.html?${queryParams.toString()}`;
+ 
+ 
+};
+
+
+
+
+
+function createSection() {
+  const elements = state.posts.map((post) => {
+
+    const deleteButton = UI.createElement(
+      "button",
+      { class: "card-button m-r-1" },
+      "Delete"
+    );
+
+    deleteButton.addEventListener("click", () => {
+      handleDelete(post.id);
+    });
+
+
+    const editButton = UI.createElement("button", { class: "card-button" }, "Edit");
+editButton.addEventListener("click", () => {
+  const queryParams = new URLSearchParams({
+    id: post.id, 
+  });
+  window.location.href = `new-post.html?${queryParams.toString()}`;
+});
+
+
+    const buttonsWrapper = UI.createElement("div", { class: "buttons-wrapper" }, [
+      deleteButton,
+      editButton
     ]);
 
-    UI.render(container, document.body);
+    return UI.createElement(
+      "div",
+      {
+        class: "card",
+      },
+      [
+        UI.createElement("div", { class: "card-body" }, [
+          UI.createElement("p", { class: "card-header" }, post.title),
+          UI.createElement('div', { class: "card-content" }, [
+            UI.createElement("img", {
+              src: post.img,
+              class: "card-img-top",
+              alt: "Post Image",
+            }),
+            UI.createElement("p", { class: "card-text" }, post.story)
+          ]),
+          buttonsWrapper 
+        ]),
+      ]
+    );
+  });
 
-    const postService = new PostService();
-    postService.fetchPosts();
+  const section = UI.createElement("section", { class: "box" }, elements);
 
-    fetchBloggers();
+  return section;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken) {
-        window.location.href = './index.html';
-    } else {
-        createHomeLayout();
+function createSidebar() {
+  api.user.getUser().then((bloggers) => {
+    bloggers.forEach((blogger) => {
+      const element = UI.createElement(
+        "div",
+        { class: "card m-b-1" },
+        [
+          UI.createElement("img", { src: getRandomAvatar(), alt: "Avatar" }),
+          UI.createElement(
+            "p",
+            { class: "sidebar-text" },
+            `${blogger.firstName} ${blogger.lastName}`
+          ),
+        ]
+      );
+      document.querySelector("#bloggers").appendChild(element);
+    });
+  });
+
+  return UI.createElement("sidebar", { id: "bloggers", class: "sidebar" }, []);
+}
+
+const initApplicants = () => {
+  try {
+    if (!isUserLogin()) {
+      window.location.assign('index.html');
+      return
     }
-});
+
+    api.post.getPosts().then(data => {
+      state.posts = data;
+      createHomeLayout();
+    })
+  } catch (error) {
+    state.posts = [];
+  }
+};
+
+initApplicants();
+
+setInterval(() => {
+  if (document.querySelector("div.section")) {
+    document
+      .querySelector("div.section")
+      .removeChild(document.querySelector("section.footer"));
+  }
+  UI.render(createFooter(), document.querySelector("div.section"));
+}, 1000);

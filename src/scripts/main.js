@@ -1,51 +1,63 @@
-import { API } from './api.js';
+import { api } from './apis/api.js'
+import { Storage } from './utils/storage.js'
 
-function createContainer() {
-    const container = UI.createElement('div', {class: "container-root"}, [
-        UI.createElement('div', {class: "header"}, [
-            UI.createElement("a", { href: "./registration.html" }, "Registration")
-        ]),
+const handleLogin = async (event) => {
+  event.preventDefault();
 
-        UI.createElement("div", {class: "form-wrapper"}, [
-            UI.createElement("div", {class: "form-container"}, [
-                UI.createElement("form", {id: "loginForm"}, [
-                    UI.createElement("input", {type: "email", id: "email", placeholder: "Email", required: true}),
-                    UI.createElement("input", {type: "password", id: "password", placeholder: "Password", required: true}),
-                    UI.createElement("button", {type: "submit"}, "Login"),
-                ]),
-                UI.createElement("div", {id: "errorMessage", style: "color:red; display:none;"}, "Invalid email or password!")
-            ])
-        ])
-    ]);
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  
+  const credentials = {
+    email, 
+    password
+  }
 
-    UI.render(container, document.body);
 
-    const loginForm = document.getElementById('loginForm');
-    loginForm.addEventListener('submit', handleLogin);
+  const result = await api.auth.login(credentials);
+
+  if (result.accessToken && result.user) {
+    Storage.set('token', result.accessToken);
+    Storage.set('user', result.user);
+    window.location.assign("home.html");  
+  } else {
+    alert('Something Wrong')
+  }
+  
+  
+
+  console.log(credentials);
 }
 
-function handleLogin(event) {
-    event.preventDefault();
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+function createLoginLayout() {
+  const container = UI.createElement("div", { class: "container-root" }, [
+    UI.createElement("header", { class: "header" }, [
+      UI.createElement("a", { href: "home.html" }, "Home"),
+    ]),
+    UI.createElement("form", { class: "form-wrapper" }, [
+      UI.createElement("div", { class: "form-container" }, [
+        UI.createElement("input", {
+          type: "text",
+          id: "email",
+          placeholder: "Email",
+        }),
+        UI.createElement("input", {
+          type: "password",
+          id: "password",
+          placeholder: "Password",
+        }),
+        UI.createElement("button", { type: "submit" }, "Login"),
+      ]),
+    ]),
+  ]);
 
-    const api = new API('https://simple-blog-api-red.vercel.app/api');
-    api.post('auth/login', { email, password })
-        .then(response => {
-            console.log(response)
-            if (response && response.accessToken) {
-                localStorage.setItem('authToken', response.accessToken); 
-                window.location.href = './home.html'; 
-            } else {
-                document.getElementById('errorMessage').style.display = 'block'; 
-            }
-        })
-        .catch(error => {
-            console.error('Login failed:', error);
-            document.getElementById('errorMessage').style.display = 'block';
-        });
+  UI.render(container, document.body);
+
+
+  const loginButton = document.querySelector('button[type="submit"]');
+  loginButton.addEventListener("click", handleLogin);
 }
 
-createContainer();
+createLoginLayout();
+
 

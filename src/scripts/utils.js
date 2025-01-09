@@ -1,61 +1,63 @@
-(function () { 
-  function isDOMElement(element) {
-  return element instanceof Element
-}
-
-function createElement(element, attributes, children) {
-  if (!element) {
-    console.log('Invalid Element Type')
-    return undefined;
+(function () {
+  function isDOMElement(value) {
+    return value instanceof Element;
   }
 
-  const elem = document.createElement(element);
-
-  if(!isDOMElement(elem)) {
-    return undefined
+  function isValidAttribute(key) {
+    const testElement = document.createElement("div");
+    return key in testElement;
   }
 
-  if(attributes) {
-    console.log('some action') 
-    for (const [key, value] of Object.entries(attributes)) {
-      elem.setAttribute(key, value);
+  function createElement(element, attributes, children) {
+    if (!element) {
+      throw new Error("The element is not provided.");
     }
-  } 
 
-  if(children && typeof children === "string") {
-    elem.innerText = children;  
-  } else if(Array.isArray(children)) {
-    children.forEach(child => {
-      elem.appendChild(child);
-    })
-  } else if (children) {
-    elem.appendChild(children);
+    const elem = document.createElement(element);
+
+    if (!isDOMElement(elem)) {
+      throw new Error("The element provided is not a valid DOM element.");
+    }
+
+    if (attributes) {
+      for (const [name, value] of Object.entries(attributes)) {
+        elem.setAttribute(name, value);
+      }
+    }
+
+    if (children && typeof children === "string") {
+      elem.innerText = children;
+    } else if (Array.isArray(children)) {
+      children.forEach((child) => {
+        elem.appendChild(child);
+      });
+    } else if (children && typeof children === "object") {
+      elem.appendChild(children);
+    }
+
+    return elem;
   }
 
-  return elem;
-}
+  function render(element, target) {
+    if (!isDOMElement(element)) {
+      throw new Error("The element provided is not a valid DOM element.");
+    }
 
-function render(element, target) {
-  if(!element || !target) {
-    console.log('Invalid Element Type');
-    return undefined
+    if (!isDOMElement(target)) {
+      throw new Error("The target provided is not a valid DOM element.");
+    }
+
+    return target.appendChild(element);
   }
 
-  if(!isDOMElement(element)) {
-    return undefined
+  const h1 = createElement("h1", { id: "title" }, [
+    createElement("span", { style: "color: gray" }, "User"),
+    createElement("span", { style: "color: lightgray" }, " Info!"),
+  ]);
+
+  window.UI = {
+    createElement,
+    render
   }
-
-  return target.appendChild(element);
-}
-
-window.UI = {
-  createElement,
-  render
-}
-
+  
 })();
-
-
-
-
- 
