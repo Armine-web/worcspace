@@ -1,5 +1,6 @@
 import { api } from './apis/api.js';
 import { isUserLogin } from './utils/is-user-login.js'
+import { Storage } from './utils/storage.js';
 
 const bloggers = [];
 
@@ -78,30 +79,26 @@ const handleDelete = (id) => {
   })
 };
 
-const handleEdit = (event, id) => {
- 
-  event.preventDefault(event);
+const handleEdit = (id) => {
   const queryParams = new URLSearchParams({
     id: id,
   });
- 
-  localStorage.setItem('id', id);
 
-  window.location.href = `edit.html?${queryParams.toString()}`;
- 
- 
+  window.location.href = `post-update.html?${queryParams.toString()}`;
 };
-
-
-
-
 
 function createSection() {
   const elements = state.posts.map((post) => {
 
+    const user = Storage.getItem('user');
+    const isAuthor = post.userId === user.id;
+    console.log(user && post.userId === user.id);
+    
+    
+  
     const deleteButton = UI.createElement(
       "button",
-      { class: "card-button m-r-1" },
+      { class: "card-button m-r-1", style: isAuthor ? "" : "display: none" },
       "Delete"
     );
 
@@ -109,15 +106,15 @@ function createSection() {
       handleDelete(post.id);
     });
 
+    const editButton = UI.createElement(
+      "button",
+      { class: "card-button edit", style: isAuthor ? "" : "display: none"},
+      "Edit"
+    );
 
-    const editButton = UI.createElement("button", { class: "card-button" }, "Edit");
-editButton.addEventListener("click", () => {
-  const queryParams = new URLSearchParams({
-    id: post.id, 
-  });
-  window.location.href = `new-post.html?${queryParams.toString()}`;
-});
-
+    editButton.addEventListener("click", () => {
+      handleEdit(post.id);
+    });
 
     const buttonsWrapper = UI.createElement("div", { class: "buttons-wrapper" }, [
       deleteButton,

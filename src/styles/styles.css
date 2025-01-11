@@ -26,8 +26,6 @@ body {
   text-decoration: none;
 }
 .header a:hover {
-  font-size: 18px;
-  font-style: italic;
   text-decoration: underline;
 }
 
@@ -102,9 +100,8 @@ button {
 }
 
 button:hover {
-  padding: 12px 18px;
-  font-size: 20px;
-  font-style: italic;
+  background-color: rgb(224, 197, 129);
+  color: rgb(143, 105, 9);
 
 }
 

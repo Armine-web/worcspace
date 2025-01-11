@@ -1,5 +1,5 @@
-import { api } from './apis/api.js';
-import { Storage } from './utils/storage.js';
+import { api } from './apis/api.js'
+import { Storage } from "./utils/storage.js";
 
 function createForm() {
   const container = UI.createElement("div", { class: "container-root" }, [
@@ -32,75 +32,84 @@ function createForm() {
     ]),
   ]);
 
+
   UI.render(container, document.body);
 
   const createPostForm = document.getElementById("create-new-post");
   createPostForm.addEventListener("click", createPostHandler);
 }
 
-function loadPostForEditing() {
-  const postId = localStorage.getItem('editPostId');
-
-  if (postId) {
-    api.post.getPostById(postId).then(post => {
-      if (post) {
-        document.getElementById("postTitle").value = post.title;
-        document.getElementById("postStory").value = post.story;
-        document.getElementById("postImage").value = post.img || "";
-      }
-    }).catch(err => {
-      console.error("Error loading post:", err);
-      alert("Post not found!");
-    });
-  } else {
-    console.log("No post ID found in localStorage");
-  }
-}
-
-function init() {
+function initApplicants() {
   createForm();
-  loadPostForEditing();
+
+  const queryString = window.location.search;
+  const searchParams = new URLSearchParams(queryString);
+
+  if (searchParams.has("id")) {
+    const postId = searchParams.get("id");
+
+    api.post.getPostById(postId).then(post => {
+      document.getElementById("postTitle").value = post.title;
+      document.getElementById("postStory").value = post.story;
+      document.getElementById("postImage").value = post.img ? post.img : "";   
+    }).catch(() => {
+      window.location.assign("home.html");
+    })
+  }
+
 }
 
-init();
+initApplicants();
+
 
 async function createPostHandler(event) {
   event.preventDefault();
 
+
   const title = document.getElementById("postTitle").value.trim();
   const story = document.getElementById("postStory").value.trim();
   const fileUpload = document.getElementById("file-upload");
+  
+  if(!fileUpload.files.lengt){
+    
+  }
+  console.log(fileUpload);
+  
+  const uploadedFile = await api.fileUpload.upload(fileUpload.files[0]);
+ 
+  
 
-  if (!title || !story || (fileUpload && !fileUpload.files.length)) {
+
+  if (!title || !story || !fileUpload.files.length) {
     alert("Please fill in all fields.");
     return;
   }
 
-  const uploadedFile = fileUpload.files.length > 0 ? await api.fileUpload.upload(fileUpload.files[0]) : null;
-
   const user = Storage.getItem('user');
+
 
   const newPost = {
     title,
     story,
-    authorName: user.username,
-    img: uploadedFile ? uploadedFile.url : '', 
-    userId: user.id,
+    authorName: user.username, 
+    img: uploadedFile.url,
+    userId: user.id
   };
 
-  const postId = localStorage.getItem('editPostId');
+  const queryString = window.location.search;
+  const searchParams = new URLSearchParams(queryString);
+  const id = searchParams.get("id");
 
-  if (postId) {
-    api.post.update(postId, newPost).then((updatedPost) => {
-      console.log(updatedPost);
-      alert('Post updated successfully!');
-      window.location.assign("home.html");
-    });
+
+  if (id) {
+    api.post.update(id, newPost).then((post) => {
+      console.log(post);
+      window.location.assign("home.html");  
+    })
   } else {
-    api.post.create(newPost).then((createdPost) => {
-      console.log(createdPost);
-      alert('New post created successfully!');
-      window.location.assign("home.html");
-    });
+    api.post.create(newPost).then((post) => {
+      console.log(post);
+      window.location.assign("home.html");  
+    })
   }
 }

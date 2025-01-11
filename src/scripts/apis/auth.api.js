@@ -40,4 +40,24 @@ export class AuthApi {
       console.log(error);
     }
   }
+  async update(id, data) {
+    try {
+      const response = await fetch(`${this.baseUrl}/posts/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`, 
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update post with ID ${id}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Error during post update:", error);
+    }
+  }
 }
