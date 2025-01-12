@@ -9,6 +9,8 @@ export class FileUpload {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      console.log("File:", file);
+      
 
       const token = Storage.getItem("token");
 

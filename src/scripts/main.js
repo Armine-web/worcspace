@@ -7,6 +7,7 @@ const handleLogin = async (event) => {
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value.trim();
   
+
   const credentials = {
     email, 
     password
@@ -33,6 +34,7 @@ function createLoginLayout() {
   const container = UI.createElement("div", { class: "container-root" }, [
     UI.createElement("header", { class: "header" }, [
       UI.createElement("a", { href: "home.html" }, "Home"),
+      UI.createElement("a", { href: "registration.html" }, "Sign Up")
     ]),
     UI.createElement("form", { class: "form-wrapper" }, [
       UI.createElement("div", { class: "form-container" }, [

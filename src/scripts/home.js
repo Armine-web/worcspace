@@ -2,39 +2,27 @@ import { api } from './apis/api.js';
 import { isUserLogin } from './utils/is-user-login.js'
 import { Storage } from './utils/storage.js';
 
-const bloggers = [];
+
 
 const state = {
   posts: [],
+  bloggers: []
 };
 
-function getRandomAvatar(gender) {
-  const avatars = [
-    "https://www.w3schools.com/howto/img_avatar.png",
-    "https://www.w3schools.com/w3images/avatar2.png",
-    "https://www.w3schools.com/w3images/avatar5.png",
-    "https://www.w3schools.com/w3images/avatar6.png",
-    "https://www.w3schools.com/howto/img_avatar2.png",
-  ];
 
-  const randomIndex = Math.floor(Math.random() * avatars.length);
-
-  return avatars[randomIndex];
-}
 
 const createNewPost = () => {
   window.location.assign("new-post.html");
 };
 
 const createHomeLayout = function () {
-  const createNewPostButton =  UI.createElement(
+  const createNewPostButton = UI.createElement(
     "button",
     { class: "panel-create-post" },
     "Create New Post"
-  )
+  );
 
   createNewPostButton.addEventListener("click", createNewPost);
-
 
   const container = UI.createElement("div", { class: "container-root" }, [
     UI.createElement(
@@ -48,7 +36,7 @@ const createHomeLayout = function () {
       ]
     ),
     UI.createElement("main", { class: "main-section" }, [
-      createSidebar(bloggers),
+      createSidebar(state.bloggers), 
       UI.createElement("div", { class: "section" }, [
         UI.createElement(
           "section",
@@ -63,6 +51,7 @@ const createHomeLayout = function () {
 
   UI.render(container, document.querySelector("body"));
 };
+
 
 function createFooter() {
   return UI.createElement("section", { class: "footer" }, Date().toString());
@@ -148,43 +137,63 @@ function createSection() {
   return section;
 }
 
-function createSidebar() {
-  api.user.getUser().then((bloggers) => {
-    bloggers.forEach((blogger) => {
-      const element = UI.createElement(
-        "div",
-        { class: "card m-b-1" },
-        [
-          UI.createElement("img", { src: getRandomAvatar(), alt: "Avatar" }),
-          UI.createElement(
-            "p",
-            { class: "sidebar-text" },
-            `${blogger.firstName} ${blogger.lastName}`
-          ),
-        ]
-      );
-      document.querySelector("#bloggers").appendChild(element);
-    });
+function createSidebar(bloggers) {
+  const elements = bloggers.map((blogger) => {
+    const user = Storage.getItem('user');
+    const isAuthor = blogger.userId === user.id;
+    console.log(user && blogger.userId === user.id);
+
+    return UI.createElement(
+      "div",
+      { class: "card m-b-1 w-125 h-125 p-2" },
+      [
+        UI.createElement("img", { style: "width: 100%; height: 100%; border-radius: 50%;",
+          class: "card-img-top",
+          alt: "Blogger Image",
+        }),
+        UI.createElement(
+          "p",
+          { class: "sidebar-text" },
+          `${blogger.firstName} ${blogger.lastName}`
+        ),
+      ]
+    );
   });
 
-  return UI.createElement("sidebar", { id: "bloggers", class: "sidebar" }, []);
+  return UI.createElement("sidebar", { id: "bloggers", class: "sidebar" }, elements);
 }
+
 
 const initApplicants = () => {
   try {
     if (!isUserLogin()) {
       window.location.assign('index.html');
-      return
+      return;
     }
 
-    api.post.getPosts().then(data => {
-      state.posts = data;
-      createHomeLayout();
-    })
+
+    Promise.all([
+      api.post.getPosts(),
+      api.user.getUser(),
+    ])
+      .then(([postsData, bloggersData]) => {
+        state.posts = postsData;
+        state.bloggers = bloggersData;
+        createHomeLayout();
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+        state.posts = [];
+        state.bloggers = [];
+        createHomeLayout(); 
+      });
   } catch (error) {
+    console.error('Unexpected error:', error);
     state.posts = [];
+    state.bloggers = [];
   }
 };
+
 
 initApplicants();
 
