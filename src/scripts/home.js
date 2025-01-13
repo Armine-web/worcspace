@@ -16,6 +16,10 @@ const createNewPost = () => {
 };
 
 const createHomeLayout = function () {
+  const token = Storage.getItem('token');
+  const isUserLogin = !!token;
+  console.log(isUserLogin);
+  
   const createNewPostButton = UI.createElement(
     "button",
     { class: "panel-create-post" },
@@ -31,7 +35,8 @@ const createHomeLayout = function () {
         class: "header",
       },
       [
-        UI.createElement("a", { href: "index.html" }, "Log In"),
+        UI.createElement("a", { href: "index.html" },  isUserLogin ? "Log Out" : "Log In"),
+        
         UI.createElement("a", { href: "registration.html" }, "Sign Up"),
       ]
     ),
@@ -140,8 +145,7 @@ function createSection() {
 function createSidebar(bloggers) {
   const elements = bloggers.map((blogger) => {
     const user = Storage.getItem('user');
-    const isAuthor = blogger.userId === user.id;
-    console.log(user && blogger.userId === user.id);
+
 
     return UI.createElement(
       "div",
@@ -151,7 +155,6 @@ function createSidebar(bloggers) {
           class: "card-img-top",
           alt: "Blogger Image",
           src: blogger.avatar
-                                
         }),
         UI.createElement(
           "p",
@@ -164,6 +167,7 @@ function createSidebar(bloggers) {
 
   return UI.createElement("sidebar", { id: "bloggers", class: "sidebar" }, elements);
 }
+
 
 
 const initApplicants = () => {

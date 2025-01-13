@@ -13,7 +13,7 @@ export class FileUpload {
       
 
       const token = Storage.getItem("token");
-
+      console.log("Token used in file upload:", token);
 
       const response = await fetch(this.getFullUrl("/file-upload/upload"), {
         method: "POST",

@@ -4,7 +4,6 @@ import { Storage } from './utils/storage.js';
 function createForm() {
   const container = UI.createElement("div", { class: "container-root" }, [
     UI.createElement("header", { class: "header" }, [
-      UI.createElement("a", { href: "home.html" }, "Home"),
       UI.createElement("a", { href: "index.html" }, "Log In"),
     ]),
     UI.createElement("form", { class: "form-wrapper" }, [
@@ -120,7 +119,7 @@ async function createUserHandler(event) {
     email,
     password,
     avatar:  uploadedFile.url,
-    userId: user ? user.id : null,
+    userId: user,
   };
 
 
@@ -136,6 +135,8 @@ async function createUserHandler(event) {
     console.error("Error during registration:", error);
     alert("Something went wrong. Please check your data and try again.");
   }
+
+
 }
 
 

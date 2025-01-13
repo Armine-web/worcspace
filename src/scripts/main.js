@@ -33,7 +33,6 @@ const handleLogin = async (event) => {
 function createLoginLayout() {
   const container = UI.createElement("div", { class: "container-root" }, [
     UI.createElement("header", { class: "header" }, [
-      UI.createElement("a", { href: "home.html" }, "Home"),
       UI.createElement("a", { href: "registration.html" }, "Sign Up")
     ]),
     UI.createElement("form", { class: "form-wrapper" }, [
