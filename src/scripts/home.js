@@ -150,6 +150,8 @@ function createSidebar(bloggers) {
         UI.createElement("img", { style: "width: 100%; height: 100%; border-radius: 50%;",
           class: "card-img-top",
           alt: "Blogger Image",
+          src: blogger.avatar
+                                
         }),
         UI.createElement(
           "p",
